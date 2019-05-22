@@ -4,15 +4,18 @@ import FlappyBird.*;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import javax.swing.*;
 
 public class Display extends JFrame implements Runnable{
 
     private Thread repaintThread;
+    private Game game;
 
-    public Display(int w, int h) {
+    public Display(Game game, int w, int h) {
         super("Flappy Bird");
+
+        this.game = game;
+
         setSize(w, h);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -25,15 +28,12 @@ public class Display extends JFrame implements Runnable{
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        Game game = Game.gameInst;
         ArrayList<Drawable> drawables = game.drawables;
 
         for (Drawable d : drawables) {
             d.draw(g2);
         }
-
     }
-
     public void run() {
         while(this.isVisible()) {
             this.repaint();
