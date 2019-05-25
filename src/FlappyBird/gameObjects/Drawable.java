@@ -1,4 +1,4 @@
-package FlappyBird;
+package FlappyBird.gameObjects;
 
 import java.awt.*;
 

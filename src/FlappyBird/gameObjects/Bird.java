@@ -1,6 +1,5 @@
 package FlappyBird.gameObjects;
 
-import FlappyBird.Drawable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -9,19 +8,22 @@ import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 
-public class Bird implements Drawable {
+public class Bird implements Drawable, PhysicsObject {
 
     private BufferedImage img = null;
     private double[] rect = new double[4];
+    private double v_vertical = 0.0;
+    private static final double gravity = 0.0007;
 
-    public Bird() {
+    public Bird(double[] rect) {
         try {
             img = ImageIO.read(new File("images/bird.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }
 
-        img = rescaleImage(100 ,100);
+        this.rect = rect;
+        img = rescaleImage(85 ,85);
     }
 
     private BufferedImage rescaleImage(int width, int height) {
@@ -33,7 +35,15 @@ public class Bird implements Drawable {
         return resized;
     }
 
+    @Override
+    public void doPhysics(double deltaTime, double velocity) {
+        this.v_vertical += gravity*deltaTime;
+        this.rect[1] += v_vertical*deltaTime;
+    }
+
+    @Override
     public void draw(@NotNull Graphics2D g) {
-        g.drawImage(img, 100, 100, img.getWidth(), img.getHeight(),null);
+        g.drawImage(img, (int)rect[0], (int)rect[1], img.getWidth(), img.getHeight(),null);
+        //g.drawRect((int)rect[0], (int)rect[1], img.getWidth(), img.getHeight());
     }
 }

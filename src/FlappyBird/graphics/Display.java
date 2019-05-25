@@ -1,6 +1,7 @@
 package FlappyBird.graphics;
 
 import FlappyBird.*;
+import FlappyBird.gameObjects.Drawable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,17 +29,26 @@ public class Display extends JFrame implements Runnable{
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+
+        g.setColor(Color.GRAY);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.BLACK);
+
         ArrayList<Drawable> drawables = game.drawables;
 
         for (Drawable d : drawables) {
             d.draw(g2);
         }
+
+
     }
     public void run() {
         while(this.isVisible()) {
+            this.invalidate();
+            this.validate();
             this.repaint();
             try {
-                Thread.sleep(50);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
