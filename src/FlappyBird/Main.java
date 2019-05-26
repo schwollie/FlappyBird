@@ -7,6 +7,7 @@ import FlappyBird.gameObjects.PhysicsObject;
 import FlappyBird.graphics.DisplayTest;
 import FlappyBird.graphics.MainPanel;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Main {
@@ -36,12 +37,17 @@ public class Main {
         } catch (InterruptedException e) {
 
         }
-
-        gameLoop();
     }
 
     public static void main(String[] args) {
-        new Main();
+        Main main = new Main();
+        Thread t = new Thread(main::gameLoop);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addBird(MainPanel panel, KeyEventListener k) {
@@ -75,7 +81,12 @@ public class Main {
                 p.doPhysics(delta_time, velocity, gravity);
             }
 
-            frame.repaint();
+            EventQueue.invokeLater(frame::repaint);
+            try {
+                Thread.sleep(1000 / 60);
+            } catch (InterruptedException e) {
+
+            }
         }
     }
 }
