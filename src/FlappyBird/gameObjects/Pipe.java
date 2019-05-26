@@ -1,36 +1,26 @@
 package FlappyBird.gameObjects;
 
-import org.jetbrains.annotations.NotNull;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import FlappyBird.graphics.MainPanel;
 
 public class Pipe implements Drawable {
 
-    private BufferedImage img = null;
+    private Sprite sprite;
     private double[] rect;
 
-    public Pipe(int direction, double[] pos) {
+    public Pipe(int direction, double[] pos, MainPanel panel) {
         this.rect = new double[4];
         this.rect[0] = pos[0]; this.rect[1] = pos[1];
+        this.rect[2] = 81;
+        this.rect[3] = 497; // right image dimensions
 
-        if (direction==0)
-            try {
-                img = ImageIO.read(new File("images/pipeUp.png"));
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        else if(direction==1)
-            try {
-                img = ImageIO.read(new File("images/pipeDown.png"));
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
+        String filename;
+        if (direction == 0) {
+            filename = "images/pipeUp.png";
+        } else {
+            filename = "images/pipeDown.png";
+        }
 
-        img = rescaleImage(img.getWidth()/3 ,img.getHeight()/3);
+        sprite = new Sprite(panel, this.rect, filename);
     }
 
     public double[] getRect() {
@@ -41,21 +31,8 @@ public class Pipe implements Drawable {
         this.rect = rect;
     }
 
-    private BufferedImage rescaleImage(int width, int height) {
-        Image tmp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resized.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
-        g2d.dispose();
-
-        this.rect[2] = resized.getWidth();
-        this.rect[3] = resized.getHeight();
-
-        return resized;
-    }
-
     @Override
-    public void draw(@NotNull Graphics2D g) {
-        g.drawImage(img, (int)this.rect[0], (int)this.rect[1], img.getWidth(), img.getHeight(),null);
+    public void updateSprite() {
+        sprite.updateRect(this.rect);
     }
 }
