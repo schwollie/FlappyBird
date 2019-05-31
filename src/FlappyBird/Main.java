@@ -12,15 +12,20 @@ import java.util.ArrayList;
 
 public class Main {
 
+    private static final int width = 1300;
+    private static final int height = 800;
+
     private static final double velocity = 0.35;
     private static final double gravity = 0.0024;
     private DisplayTest frame;
+    private ArrayList<Bird> birds = new ArrayList<>();
+    private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Drawable> drawables = new ArrayList<>();
     private ArrayList<PhysicsObject> physicsObjects = new ArrayList<>();
 
     public Main() {
         KeyEventListener k = new KeyEventListener();
-        frame = new DisplayTest(1300, 800);
+        frame = new DisplayTest(width, height);
         frame.addKeyListener(k);
 
         MainPanel panel = new MainPanel();
@@ -51,10 +56,12 @@ public class Main {
     }
 
     private void addBird(MainPanel panel, KeyEventListener k) {
-        Bird b = new Bird(new double[]{100, 200, 85, 85}, panel);
+
+        Bird b = new Bird(new double[]{100, 200, 65, 46}, panel);
         k.addListener(b);
         drawables.add(b);
         physicsObjects.add(b);
+        birds.add(b);
     }
 
     private void addPipes(MainPanel panel) {
@@ -62,13 +69,16 @@ public class Main {
             Obstacle o = new Obstacle(new double[]{1000 + i * 433, 0}, panel);
             drawables.add(o);
             physicsObjects.add(o);
+            obstacles.add(o);
         }
     }
 
     private void gameLoop() {
         double last_time = System.currentTimeMillis();
 
-        while (true) {
+        boolean collision = false;
+
+        while (!collision) {
             double time = System.currentTimeMillis();
             double delta_time = time - last_time;
             last_time = time;
@@ -79,6 +89,12 @@ public class Main {
 
             for (PhysicsObject p : physicsObjects) {
                 p.doPhysics(delta_time, velocity, gravity);
+            }
+
+            for (Bird b : birds) {
+                if (b.doesCollide(obstacles)) {
+                    collision = true;
+                }
             }
 
             EventQueue.invokeLater(frame::repaint);

@@ -13,6 +13,7 @@ public class Sprite {
 
     private BufferedImage img;
     private double[] rect;
+    private boolean visible = true;
 
     public Sprite(MainPanel panel, double[] rect, String filename) {
         super();
@@ -37,7 +38,8 @@ public class Sprite {
     }
 
     public void paintComponent(@NotNull Graphics g) {
-        g.drawImage(img, (int) rect[0], (int) rect[1], img.getWidth(), img.getHeight(), null);
+        if (visible)
+            g.drawImage(img, (int) rect[0], (int) rect[1], img.getWidth(), img.getHeight(), null);
     }
 
     public double[] getRect() {
@@ -51,6 +53,10 @@ public class Sprite {
 
         this.rect = rect;
 
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visible = visibility;
     }
 
 }

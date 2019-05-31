@@ -9,8 +9,8 @@ public class Obstacle implements Drawable, PhysicsObject {
     private Pipe top;
     private Pipe bottom;
     private double[] pos;
-    private static final int distance = 100;
-    private static final int height_bounds = 300;
+    private static final int distance = 120;
+    private static final int height_bounds = 400;
     private int offset = 150;
 
     public Obstacle(double[] pos, MainPanel panel) {
@@ -20,11 +20,11 @@ public class Obstacle implements Drawable, PhysicsObject {
         bottom = new Pipe(0, pos, panel);
 
         double[] rectTop = top.getRect();
-        top.setRect(new double[] {this.pos[0], this.pos[1]-offset-distance,
+        top.setRect(new double[]{this.pos[0], this.pos[1] - offset - distance,
                 rectTop[2], rectTop[3]});
 
         double[] rectBottom = bottom.getRect();
-        bottom.setRect(new double[] {this.pos[0], this.pos[1]+rectBottom[3]-offset+distance,
+        bottom.setRect(new double[]{this.pos[0], this.pos[1] + rectBottom[3] - offset + distance,
                 rectBottom[2], rectBottom[3]});
 
     }
@@ -62,10 +62,37 @@ public class Obstacle implements Drawable, PhysicsObject {
         }
     }
 
+    public Pipe getTop() {
+        return top;
+    }
+
+    public Pipe getBottom() {
+        return bottom;
+    }
+
+    public double[] getPos() {
+        return this.pos;
+    }
+
+    public void setPos(double[] pos) {
+        this.pos = pos;
+    }
+
+    public Pipe[] getPipes() {
+        Pipe[] p = new Pipe[2];
+        p[0] = this.top;
+        p[1] = this.bottom;
+        return p;
+    }
+
+    public double getWidth() {
+        return top.getRect()[2];
+    }
+
     @Override
     public void doPhysics(double deltaTime, double velocity, double gravity) {
         checkOutOfBounds();
-        pos[0] -= deltaTime*velocity;
+        pos[0] -= deltaTime * velocity;
         updatePipes();
     }
 
