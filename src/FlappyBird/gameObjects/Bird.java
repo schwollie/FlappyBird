@@ -7,13 +7,13 @@ import java.util.ArrayList;
 
 public class Bird implements Drawable, PhysicsObject, KeyEventHandling {
 
-    private Sprite sprite;
+    private SpriteImage spriteImage;
     private double[] rect;
     private double v_vertical = 0.0;
 
     public Bird(double[] rect, MainPanel panel) {
         this.rect = rect;
-        sprite = new Sprite(panel, rect, "images/bird.png");
+        spriteImage = new SpriteImage(panel, rect, "images/bird.png");
     }
 
     public void jump() {
@@ -59,6 +59,6 @@ public class Bird implements Drawable, PhysicsObject, KeyEventHandling {
 
     @Override
     public void updateSprite() {
-        sprite.updateRect(this.rect);
+        spriteImage.updateRect(this.rect);
     }
 }

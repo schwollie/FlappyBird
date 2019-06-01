@@ -19,6 +19,7 @@ public class MainAI {
     private static final int birdX = 100;
     private static final int birdY = 200;
 
+    private static final double simulationSpeed = 1.1;
     private static final double velocity = 0.35;
     private static final double gravity = 0.0026;
     private DisplayTest frame;
@@ -59,7 +60,7 @@ public class MainAI {
     }
 
     private void addBird(MainPanel panel) {
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 300; i++) {
             AIBird b = new AIBird(new double[]{birdX, birdY, 65, 46}, panel);
             birds.add(b);
             birds_all.add(b);
@@ -92,7 +93,7 @@ public class MainAI {
         while (true) {
             while (birds.size() > 0) {
                 double time = System.currentTimeMillis();
-                double delta_time = time - last_time;
+                double delta_time = (time - last_time) * simulationSpeed;
                 last_time = time;
 
                 // Pipes
@@ -146,13 +147,14 @@ public class MainAI {
     private Obstacle getNextObstacle() {
         Obstacle next = obstacles.get(0);
         for (Obstacle o : obstacles) {
-            if (o.getPos()[0] + o.getWidth() > birdX && o.getPos()[0] - birdX < next.getPos()[0] - birdX) {
-                System.out.println(o.getWidth());
+            if (o.getPos()[0] + o.getWidth() >= birdX && o.getPos()[0] - birdX < next.getPos()[0] - birdX) {
+                //System.out.println(o.getWidth());
                 next = o;
             }
         }
         return next;
     }
+
 
     private void naturalSelection() {
         // natural Selection + Evolution
@@ -171,7 +173,7 @@ public class MainAI {
                         bestBirds.get(rnd.nextInt(bestBirds.size())).getNn()));
             } else if (rand < 80) {
                 bird.setNn(bestBirds.get(rnd.nextInt(bestBirds.size())).getNn());
-                bird.getNn().mutate();
+                bird.setNn(NeuronalNetwork.mutate(bird.getNn()));
             } else if (rand < 90) {
                 bird.setNn(bestBirds.get(rnd.nextInt(bestBirds.size())).getNn());
             } else {

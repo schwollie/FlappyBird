@@ -4,7 +4,7 @@ import FlappyBird.graphics.MainPanel;
 
 public class Pipe implements Drawable {
 
-    private Sprite sprite;
+    private SpriteImage spriteImage;
     private double[] rect;
 
     public Pipe(int direction, double[] pos, MainPanel panel) {
@@ -20,7 +20,7 @@ public class Pipe implements Drawable {
             filename = "images/pipeDown.png";
         }
 
-        sprite = new Sprite(panel, this.rect, filename);
+        spriteImage = new SpriteImage(panel, this.rect, filename);
     }
 
     public double[] getRect() {
@@ -33,6 +33,6 @@ public class Pipe implements Drawable {
 
     @Override
     public void updateSprite() {
-        sprite.updateRect(this.rect);
+        spriteImage.updateRect(this.rect);
     }
 }

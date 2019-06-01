@@ -11,9 +11,74 @@ public class NeuronalNetwork {
         setupWeights();
     }
 
+    public NeuronalNetwork(Matrix[] weights, int[] layer_sizes) {
+        this.layer_sizes = layer_sizes;
+        this.weights = weights;
+    }
+
+    private static int[] createSequenceParams() {
+        Random rnd = new Random();
+        return new int[]{rnd.nextInt(19) + 1, rnd.nextInt(1)};
+        // {length of sequence, mother(0) or father(1)}
+    }
+
+    private void setupWeights() {
+        weights = new Matrix[layer_sizes.length - 1];
+        for (int i = 0; i < layer_sizes.length - 1; i++) {
+            weights[i] = Matrix.random(layer_sizes[i + 1], layer_sizes[i]);
+        }
+    }
+
+    public Matrix[] getWeights() {
+        return weights;
+    }
+
+    public int[] getLayerSizes() {
+        return layer_sizes;
+    }
+
+    public static NeuronalNetwork mutate(NeuronalNetwork nn) {
+        NeuronalNetwork new_nn = new NeuronalNetwork(nn.getWeights(), nn.getLayerSizes());
+        double influence = 0.04;
+
+        Matrix[] weights = new_nn.getWeights();
+        Random rnd = new Random();
+
+        for (int w = 0; w < weights.length; w++) {
+            for (double[] m : weights[w].getData()) {
+                for (int c = 0; c < m.length; c++) {
+                    double randomDelta = (double) (rnd.nextInt(200) - 100) / 100 * influence;
+                    m[c] += randomDelta;
+                }
+            }
+        }
+        return new_nn;
+    }
+
+    public Matrix forward(Matrix A) {
+        Matrix[] dots = new Matrix[weights.length];
+        Matrix[] sigs = new Matrix[weights.length];
+
+        Matrix dot = weights[0].times(A.transpose());
+        dots[0] = dot;
+        Matrix sig = dot.sigmoid();
+        sigs[0] = sig;
+
+        for (int i = 1; i < weights.length; i++) {
+            dots[i] = weights[i].times(sigs[i - 1]);
+            sigs[i] = dots[i].sigmoid();
+        }
+
+        //sigs[weights.length-1].show();
+        return sigs[weights.length - 1];
+    }
+
     public static NeuronalNetwork breed(NeuronalNetwork nn1, NeuronalNetwork nn2) {
-        Matrix[] fatherM = nn1.getWeights();
-        Matrix[] motherM = nn2.getWeights();
+        NeuronalNetwork father = new NeuronalNetwork(nn1.getWeights(), nn1.getLayerSizes());
+        NeuronalNetwork mother = new NeuronalNetwork(nn2.getWeights(), nn2.getLayerSizes());
+
+        Matrix[] fatherM = father.getWeights();
+        Matrix[] motherM = mother.getWeights();
 
         NeuronalNetwork child = new NeuronalNetwork(nn1.getLayerSizes());
 
@@ -47,63 +112,19 @@ public class NeuronalNetwork {
 
     }
 
-    private static int[] createSequenceParams() {
-        Random rnd = new Random();
-        return new int[]{rnd.nextInt(19) + 1, rnd.nextInt(1)};
-        // {length of sequence, mother(0) or father(1)}
-    }
-
-    private void setupWeights() {
-        weights = new Matrix[layer_sizes.length - 1];
-        for (int i = 0; i < layer_sizes.length - 1; i++) {
-            weights[i] = Matrix.random(layer_sizes[i + 1], layer_sizes[i]);
-        }
-    }
-
-    public Matrix[] getWeights() {
-        return weights;
-    }
-
-    public int[] getLayerSizes() {
-        return layer_sizes;
-    }
-
-    public Matrix forward(Matrix A) {
-        Matrix[] dots = new Matrix[weights.length];
-        Matrix[] sigs = new Matrix[weights.length];
-
-        Matrix dot = weights[0].times(A.transpose());
-        dots[0] = dot;
-        Matrix sig = dot.sigmoid();
-        sigs[0] = sig;
-
-        for (int i = 1; i < weights.length; i++) {
-            dots[i] = weights[i].times(sigs[i - 1]);
-            sigs[i] = dots[i].sigmoid();
-        }
-
-        //sigs[weights.length-1].show();
-        return sigs[weights.length - 1];
-    }
-
-    public void mutate() {
-        double influence = 0.01;
-
-        Matrix[] weights = this.getWeights();
-        Random rnd = new Random();
-
-        for (int w = 0; w < weights.length; w++) {
-            for (double[] m : weights[w].getData()) {
-                for (int c = 0; c < m.length; c++) {
-                    double randomDelta = (double) (rnd.nextInt(200) - 100) / 100 * influence;
-                    m[c] += randomDelta;
-                }
-            }
-        }
-    }
-
     public void randomWeights() {
         this.setupWeights();
+    }
+
+    @Override
+    public Object clone() {
+        NeuronalNetwork nn = null;
+        try {
+            nn = (NeuronalNetwork) super.clone();
+        } catch (CloneNotSupportedException e) {
+            nn = new NeuronalNetwork(this.getWeights(), this.getLayerSizes());
+        }
+        return nn;
     }
 
     /*public static void main(String[] args) {

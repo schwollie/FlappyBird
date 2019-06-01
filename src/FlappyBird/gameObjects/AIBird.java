@@ -8,15 +8,17 @@ import java.util.ArrayList;
 
 public class AIBird implements Drawable, PhysicsObject, Comparable<AIBird> {
 
-    private Sprite sprite;
+    private SpriteImage spriteImage;
     private double[] rect;
     private double v_vertical = 0.0;
     private NeuronalNetwork nn;
     private float fitness;
+    private MainPanel panel;
 
     public AIBird(double[] rect, MainPanel panel) {
+        this.panel = panel;
         this.rect = rect;
-        this.sprite = new Sprite(panel, rect, "images/bird.png");
+        this.spriteImage = new SpriteImage(panel, rect, "images/bird.png");
         this.nn = new NeuronalNetwork(new int[]{5, 3, 1});
     }
 
@@ -54,7 +56,8 @@ public class AIBird implements Drawable, PhysicsObject, Comparable<AIBird> {
     }
 
     public void setNn(NeuronalNetwork nn) {
-        this.nn = nn;
+        NeuronalNetwork new_nn = new NeuronalNetwork(nn.getWeights(), nn.getLayerSizes());
+        this.nn = new_nn;
     }
 
     public void setYPos(double y) {
@@ -84,7 +87,11 @@ public class AIBird implements Drawable, PhysicsObject, Comparable<AIBird> {
     }
 
     public void setVisibility(boolean visibility) {
-        sprite.setVisibility(visibility);
+        spriteImage.setVisibility(visibility);
+    }
+
+    public double[] getRect() {
+        return this.rect;
     }
 
     @Override
@@ -109,6 +116,15 @@ public class AIBird implements Drawable, PhysicsObject, Comparable<AIBird> {
 
     @Override
     public void updateSprite() {
-        sprite.updateRect(this.rect);
+        spriteImage.updateRect(this.rect);
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new AIBird(this.getRect(), this.panel);
+        }
     }
 }
